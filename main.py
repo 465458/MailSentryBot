@@ -240,7 +240,17 @@ def perform_analysis(message):
         report = []
         print(f"Processing message for analysis: {text}")
 
-        urls = re.findall(r'(?:http[s]?|ftp)://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
+        urls = re.compile(
+            r'(?:(?:https?|ftp)://)?'  # Протокол (опционально)
+            r'(?:'  
+            r'[a-zA-Z0-9-]+\.'         # Поддомен
+            r'[a-zA-Z]{2,}'            # Домен верхнего уровня (min 2 буквы)
+            r'(?:\/[^\s]*)?'           # Путь (опционально)
+            r'|'                       # ИЛИ
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'  # IPv4
+            r')',
+            re.IGNORECASE
+        )
         expanded_urls = []
         if urls:
             report.append("🔎 Анализ ссылок:")
